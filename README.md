@@ -33,3 +33,20 @@ Maximum Drawdown (MDD): 8.18%
 Profit Factor: 1.36
 
 ## **Result:**<img width="1384" height="1178" alt="BlackGoldPair Result" src="https://github.com/user-attachments/assets/d4733e1c-a0c8-472c-87c4-42d0a46c6020" />
+
+## **Limitations and Areas for Improvement**
+While this backtest provides a solid proof-of-concept for the USO/XLE pair, it operates on several key simplifications. Before this could be considered a robust trading strategy, the following areas would need to be addressed:
+
+**- Transaction Costs and Slippage:** The current P&L calculation is idealized and does not account for trading commissions, exchange fees, or the bid-ask spread. Mean-reversion strategies often involve frequent trades, and these costs would absolutely eat into the cumulative returns shown. Furthermore, the backtest assumes execution at the 'Close' price, whereas real-world orders would be filled at the 'Bid' or 'Ask', introducing slippage.
+
+**- Lookahead Bias:** A subtle but critical flaw is present in the pair selection process. The USO/XLE pair was identified as cointegrated (p-value: 0.0010) using a test run over the entire data period, including the "out-of-sample" test period. This is a form of lookahead bias. A more rigorous approach would be a true walk-forward analysis:
+
+
+
+1.   Formation Period: Run the cointegration screening only on an initial period (e.g., 2022-2023) to find promising pairs.
+2.   Trading Period: Test the strategy only on the subsequent, completely unseen period (e.g., 2024-2025).
+
+
+**- Parameter Risk:** The strategy's performance is sensitive to its parameters: the hedge ratio lookback , the Z-score lookback , and the entry/exit thresholds. These were set manually. A more advanced test would involve optimizing these parameters  on a validation set or, even better, making them dynamic such as adaptive thresholds based on rolling volatility.
+
+**Strategy Robustness:** The current model is simple. It lacks a crucial risk management component: a stop-loss to prevent situations where the cointegrating relationship fundamentally breaks down. The Z-score could diverge well beyond -3.0 or +3.0, leading to significant losses. A real-world strategy must have a mechanism (e.g., a maximum loss per trade, or a secondary Z-score cutoff) to exit a trade when the mean-reversion assumption fails.
